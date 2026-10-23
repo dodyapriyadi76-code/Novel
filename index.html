@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NusaNovel Remaja - Baca Novel Remaja Baper & Emosional</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dusk: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                            950: '#2a120e',
+                        },
+                        night: {
+                            800: '#1e1b18',
+                            900: '#141210',
+                            950: '#0d0b0a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Georgia', 'Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1b18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ea580c;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f97316;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #fb923c, #ef4444, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-dusk-gradient {
+            background: linear-gradient(135deg, #2a120e 0%, #1e1b18 50%, #0d0b0a 100%);
+        }
+        .card-glow:hover {
+            box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-night-900 text-gray-200 font-sans min-h-screen flex flex-col antialiased selection:bg-dusk-500 selection:text-white">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="sticky top-0 z-40 bg-night-950/80 backdrop-blur-md border-b border-dusk-900/40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-dusk-600 to-rose-500 flex items-center justify-center text-white shadow-lg shadow-dusk-600/30">
+                        <i data-lucide="book-open-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight text-white flex items-center gap-1">
+                            Nusa<span class="text-gradient">Novel</span>
+                        </span>
+                        <span class="block text-[10px] font-medium text-dusk-400 tracking-wider uppercase -mt-1">Remaja Baper</span>
+                    </div>
+                </div>
+
+                <!-- Search Bar (Desktop) -->
+                <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
+                    <input type="text" id="searchInput" placeholder="Cari judul novel, penulis, atau kata kunci..." 
+                        class="w-full bg-night-800/80 border border-dusk-900/60 rounded-full py-2 pl-10 pr-4 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-dusk-500 focus:ring-1 focus:ring-dusk-500 transition-all">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-gray-400"></i>
+                    <button id="clearSearch" class="hidden absolute right-3 top-2.5 text-gray-400 hover:text-white">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Navigation Action Buttons -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button id="favTabBtn" onclick="toggleFavoritTab()" class="relative px-3.5 py-2 rounded-xl bg-night-800 hover:bg-night-800/80 border border-dusk-900/50 text-xs sm:text-sm font-medium flex items-center gap-2 text-gray-300 hover:text-dusk-400 transition-all">
+                        <i data-lucide="heart" class="w-4 h-4 text-rose-500 fill-rose-500/20"></i>
+                        <span class="hidden sm:inline">Favorit Saya</span>
+                        <span id="favCount" class="bg-dusk-600 text-white text-[11px] font-bold px-1.5 py-0.2 rounded-full min-w-[18px] text-center">0</span>
+                    </button>
+
+                    <button onclick="toggleMobileSearch()" class="md:hidden p-2.5 rounded-xl bg-night-800 text-gray-300 hover:text-white">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Search Bar Expandable -->
+            <div id="mobileSearch" class="hidden md:hidden pb-4 pt-1">
+                <div class="relative">
+                    <input type="text" id="mobileSearchInput" placeholder="Cari judul novel atau kata kunci..." 
+                        class="w-full bg-night-800 border border-dusk-900/60 rounded-xl py-2 pl-10 pr-4 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-dusk-500">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- FEATURED HERO BANNER (BAYANG DI BAWAH LANGIT SENJA) -->
+        <section id="featuredBanner" class="relative rounded-3xl overflow-hidden border border-dusk-800/50 shadow-2xl bg-dusk-gradient group">
+            <div class="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay group-hover:scale-105 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/80 to-transparent"></div>
+
+            <div class="relative z-10 p-6 sm:p-10 lg:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                <div class="max-w-2xl space-y-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-dusk-600 to-rose-600 text-white shadow-md">
+                            🔥 Rekomendasi Utama Remaja
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-dusk-950/80 text-dusk-300 border border-dusk-800">
+                            Sedih / Baper
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-dusk-950/80 text-dusk-300 border border-dusk-800">
+                            Kisah Cinta
+                        </span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                        Bayang di Bawah <span class="text-gradient">Langit Senja</span>
+                    </h1>
+
+                    <p class="text-sm sm:text-base text-gray-300 leading-relaxed line-clamp-3">
+                        Di bawah rintik hujan dan guratan warna senja, Arka pernah mengikat sebuah janji manis kepada Laras. Namun ketika sisa waktu Arka perlahan memudar menjadi sekadar bayang-bayang, Laras harus belajar arti merelakan...
+                    </p>
+
+                    <div class="flex items-center gap-6 text-xs sm:text-sm text-gray-400 font-medium">
+                        <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-4 h-4 text-dusk-400"></i> Kirana Larasati</span>
+                        <span class="flex items-center gap-1.5 text-amber-400"><i data-lucide="star" class="w-4 h-4 fill-amber-400"></i> 4.9 / 5.0</span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="book-open" class="w-4 h-4 text-dusk-400"></i> 3 Bab Spesial</span>
+                    </div>
+
+                    <div class="pt-2 flex flex-wrap items-center gap-4">
+                        <button onclick="bacaNovel(0)" class="px-6 py-3 rounded-xl bg-gradient-to-r from-dusk-600 to-rose-600 text-white font-semibold hover:from-dusk-500 hover:to-rose-500 transition-all shadow-lg shadow-dusk-600/30 flex items-center gap-2 group/btn">
+                            <i data-lucide="play" class="w-4 h-4 fill-white group-hover/btn:translate-x-0.5 transition-transform"></i> Baca Sekarang
+                        </button>
+                        <button onclick="toggleBookmark(0)" class="px-4 py-3 rounded-xl bg-night-800/80 hover:bg-night-800 border border-dusk-900/60 text-gray-300 hover:text-white transition-all flex items-center gap-2">
+                            <i data-lucide="bookmark" id="heroFavIcon" class="w-4 h-4"></i> Simpan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Visual Badge Cover -->
+                <div class="hidden md:flex flex-shrink-0 w-48 h-64 rounded-2xl overflow-hidden shadow-2xl border-2 border-dusk-500/30 relative group-hover:rotate-1 transition-transform duration-500">
+                    <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=600&q=80" alt="Bayang di Bawah Langit Senja" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-night-950 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-3 left-3 right-3 text-center">
+                        <p class="text-[11px] font-bold text-dusk-300 uppercase tracking-wider">Novel Populer #1</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORY FILTERS & HEADER SECTION -->
+        <section class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-dusk-900/40 pb-4">
+                <div>
+                    <h2 id="sectionTitle" class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-dusk-400"></i> Jelajahi Novel Remaja
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-400 mt-0.5">Temukan 50 kisah seru, penuh air mata, dan romansa yang menguras emosi.</p>
+                </div>
+
+                <!-- Quick Category Buttons -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
+                    <button onclick="filterKategori('semua')" id="btn-semua" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-dusk-600 text-white shadow-md">
+                        ✨ Semua (50)
+                    </button>
+                    <button onclick="filterKategori('cinta')" id="btn-cinta" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-night-800 text-gray-400 hover:text-white border border-dusk-900/50">
+                        💕 Kisah Cinta
+                    </button>
+                    <button onclick="filterKategori('keluarga')" id="btn-keluarga" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-night-800 text-gray-400 hover:text-white border border-dusk-900/50">
+                        🏠 Keluarga
+                    </button>
+                    <button onclick="filterKategori('sedih')" id="btn-sedih" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-night-800 text-gray-400 hover:text-white border border-dusk-900/50">
+                        😭 Sedih / Baper
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOVEL GRID LISTING -->
+        <section>
+            <div id="novelGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- Javascript will render 50 novel cards here -->
+            </div>
+
+            <!-- Empty State Search/Filter -->
+            <div id="emptyState" class="hidden py-16 text-center space-y-4">
+                <div class="w-16 h-16 bg-night-800 rounded-full flex items-center justify-center mx-auto text-dusk-400">
+                    <i data-lucide="book-x" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-200">Tidak ada novel yang ditemukan</h3>
+                <p class="text-sm text-gray-400 max-w-md mx-auto">Coba gunakan kata kunci pencarian lain atau ganti filter kategori yang dipilih.</p>
+                <button onclick="resetFilters()" class="px-4 py-2 rounded-xl bg-dusk-600 text-white text-sm font-medium hover:bg-dusk-500 transition-all">
+                    Tampilkan Semua Novel
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 bg-night-950 border-t border-dusk-900/50 py-8 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-3">
+            <p class="flex items-center justify-center gap-1">
+                Dibuat dengan <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500 fill-rose-500"></i> untuk seluruh pembaca remaja Indonesia.
+            </p>
+            <p>&copy; 2026 NusaNovel Remaja. Hak Cipta Dilindungi.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL NOVEL READER (INTERACTIVE READER) -->
+    <div id="readerModal" class="fixed inset-0 z-50 hidden flex flex-col bg-night-950 transition-opacity duration-300">
+        
+        <!-- Reader Top Control Bar -->
+        <header id="readerHeader" class="bg-night-900/90 backdrop-blur-md border-b border-dusk-900/50 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-20">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <button onclick="closeReader()" class="p-2 rounded-xl bg-night-800 text-gray-300 hover:text-white hover:bg-night-800/80 transition-all flex-shrink-0">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <div class="truncate">
+                    <h3 id="readerTitle" class="text-sm sm:text-base font-bold text-white truncate">Judul Novel</h3>
+                    <p id="readerAuthor" class="text-xs text-dusk-400 truncate">Penulis</p>
+                </div>
+            </div>
+
+            <!-- Reader Controls & Formatting -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                <!-- Text Size Adjuster -->
+                <div class="flex items-center bg-night-800 rounded-xl p-1 border border-dusk-900/50">
+                    <button onclick="changeFontSize(-2)" class="px-2 py-1 text-xs font-bold text-gray-300 hover:text-white" title="Kecilkan Teks">A-</button>
+                    <span id="fontSizeDisplay" class="text-[11px] text-dusk-400 px-1">16px</span>
+                    <button onclick="changeFontSize(2)" class="px-2 py-1 text-xs font-bold text-gray-300 hover:text-white" title="Besarkan Teks">A+</button>
+                </div>
+
+                <!-- Theme Toggle inside reader -->
+                <button onclick="toggleReaderTheme()" id="themeBtn" class="p-2 rounded-xl bg-night-800 text-gray-300 hover:text-white border border-dusk-900/50" title="Ganti Mode Tema">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Bookmark Button -->
+                <button id="readerFavBtn" onclick="toggleReaderBookmark()" class="p-2 rounded-xl bg-night-800 text-gray-300 hover:text-rose-500 border border-dusk-900/50">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Reader Main Text Area -->
+        <div id="readerBody" class="flex-1 overflow-y-auto p-4 sm:p-8 lg:p-12 max-w-3xl mx-auto w-full space-y-8 font-serif leading-relaxed text-gray-300">
+            <!-- Chapter Dropdown selection -->
+            <div class="font-sans flex items-center justify-between bg-night-900 p-4 rounded-2xl border border-dusk-900/50">
+                <span class="text-xs font-semibold uppercase tracking-wider text-dusk-400">Pilih Bab</span>
+                <select id="chapterSelect" onchange="loadChapter(this.value)" class="bg-night-800 text-xs sm:text-sm text-gray-200 border border-dusk-800 rounded-xl px-3 py-1.5 focus:outline-none focus:border-dusk-500">
+                    <!-- Dynamic Chapters -->
+                </select>
+            </div>
+
+            <!-- Chapter Content Display -->
+            <div id="chapterContent" class="space-y-6 text-base sm:text-lg transition-all">
+                <!-- Content injected via JS -->
+            </div>
+
+            <!-- Reader Navigation Bottom -->
+            <div class="font-sans pt-8 border-t border-dusk-900/40 flex items-center justify-between gap-4">
+                <button id="prevChapBtn" onclick="navigateChapter(-1)" class="px-4 py-2.5 rounded-xl bg-night-800 text-gray-300 hover:text-white hover:bg-dusk-600/30 text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Bab Sebelumnya
+                </button>
+                <button id="nextChapBtn" onclick="navigateChapter(1)" class="px-4 py-2.5 rounded-xl bg-dusk-600 text-white hover:bg-dusk-500 text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all">
+                    Bab Selanjutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & NOVEL DATA -->
+    <script>
+        // DATA 50 NOVEL REMAJA UNIK (DENGAN TEMA SENJA/HUJAN/BAPER)
+        const novelData = [
+            {
+                id: 0,
+                judul: "Bayang di Bawah Langit Senja",
+                penulis: "Kirana Larasati",
+                kategori: ["sedih", "cinta"],
+                rating: 4.9,
+                cover: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Di bawah rintik hujan dan guratan warna senja, Arka menyimpan janji rahasia pada Laras. Namun waktu yang kian memudar memaksa mereka belajar arti melepaskan.",
+                bab: [
+                    {
+                        judul: "Bab 1: Rintik Hujan di Halte Sekolah",
+                        isi: `<p>Aroma tanah basah—petrichor—selalu berhasil membawa pikiran Laras melayang pada kenangan lama. Sore itu, langit di atas SMA Garuda tampak berwarna jingga pekat bercampur abu-abu mendung. Hujan turun tanpa peringatan, membendung niat Laras untuk segera pulang.</p>
+                        <p>"Memandangi senja di kala hujan itu seperti mencintai seseorang yang kamu tahu tak akan pernah bisa kamu miliki," sebuah suara bernada hangat tiba-tiba terdengar di sampingnya.</p>
+                        <p>Laras menoleh. Arka berdiri di sana, menyunggingkan senyum tipis dengan seragam yang sedikit basah di bagian bahu. Di tangannya, Arka menggenggam sebuah kamera analog tua yang tampak berharga.</p>
+                        <p>"Kenapa gitu?" tanya Laras heran.</p>
+                        <p>"Karena indahnya cuma sebentar, Ras. Setelah itu, yang tersisa cuma gelap," jawab Arka pelan, matanya menatap jauh ke arah cakrawala senja yang perlahan tertutup tirai hujan.</p>`
+                    },
+                    {
+                        judul: "Bab 2: Janji Kamera Tua",
+                        isi: `<p>Dua minggu sejak pertemuan di halte, Arka dan Laras menjadi tak terpisahkan. Di atas atap gedung sekolah saat bel usai berbunyi, tempat itu menjadi rahasia kecil milik mereka berdua.</p>
+                        <p>"Gue mau kita bikin janji," ucap Arka sambil meletakkan kamera analognya di pangkuan Laras.</p>
+                        <p>"Janji apa?" Laras menaikkan sebelah alisnya.</p>
+                        <p>"Setiap kali langit senja muncul, kita harus ambil satu foto bersama. Rekam jejak waktu, supaya kalau salah satu dari kita lupa, foto ini yang bakal ngingetin," ujar Arka. Senyumnya terkembang manis, namun Laras bisa menangkap seberkas kesedihan di balik mata cokelat laki-laki itu.</p>
+                        <p>Laras tidak tahu, bahwa janji itu adalah cara Arka mengulur waktu dari takdir yang perlahan mulai memanggilnya pulang.</p>`
+                    },
+                    {
+                        judul: "Bab 3: Bayang yang Perlahan Pudar",
+                        isi: `<p>Ujian semester makin dekat, namun Arka makin sering menghilang. Kursi di sebelah Laras kini lebih sering kosong. Ketika Laras bertanya pada guru, jawaban mereka selalu sama: *Arka sedang izin berobat.*</p>
+                        <p>Hingga suatu sore di bawah langit senja yang dingin, Laras memberanikan diri mendatangi rumah sakit kota. Di balik pintu kamar nomor 402, ia melihat Arka terbaring lemah dengan slang oksigen melekat di wajahnya.</p>
+                        <p>"Kenapa kamu nyembunyiin ini dari aku, Ka?" suara Laras bergetar. Air matanya menetes tanpa bisa ditahan.</p>
+                        <p>Arka meraih tangan Laras pelan, jemarinya terasa dingin. "Karena gue nggak mau bayang-bayang kesedihan ini ngerusak warna senja yang selalu kamu suka, Ras..."</p>`
+                    }
+                ]
+            },
+            {
+                id: 1,
+                judul: "Surat yang Tak Pernah Sampai",
+                penulis: "Arkan Syafiq",
+                kategori: ["sedih", "cinta"],
+                rating: 4.8,
+                cover: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Kumpulan 100 surat cinta rahasia yang ditulis Farhan untuk sahabatnya, Maya. Saat Farhan pindah tanpa pamit, kotak surat itu tertinggal di laci meja.",
+                bab: [{ judul: "Bab 1: Kotak Kayu di Laci Meja", isi: `<p>Maya menemukan kotak kayu berdebu itu tepat di hari kelulusan mereka. Di dalamnya ada puluhan amplop cokelat berstempel tanggal dari tiga tahun lalu...</p>` }]
+            },
+            {
+                id: 2,
+                judul: "Rumah Tempat Kita Pulang",
+                penulis: "Nabila Putri",
+                kategori: ["keluarga", "sedih"],
+                rating: 4.9,
+                cover: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Kisah tiga bersaudara yang berjuang mempertahankan rumah peninggalan orang tua mereka dari ancaman sita di tengah konflik kesalahpahaman keluarga.",
+                bab: [{ judul: "Bab 1: Kunci Pintu yang Rusak", isi: `<p>Suara gemerincing kunci meja tua itu menjadi saksi bisu pertengkaran pertama antara Dara dan kedua adiknya setelah kepergian Ibu...</p>` }]
+            },
+            {
+                id: 3,
+                judul: "Gerimis di Halaman Sekolah",
+                penulis: "Rian Febrian",
+                kategori: ["cinta"],
+                rating: 4.7,
+                cover: "https://images.unsplash.com/photo-1438449805896-28a666819a20?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Kisah romansa manis remaja SMA antara kapten basket yang cuek dengan anggota klub teater yang ceria di musim hujan.",
+                bab: [{ judul: "Bab 1: Payung Kuning", isi: `<p>Hujan deras mengguyur lapangan basket. Danu pasrah berdiri di pinggir koridor sampai sebuah payung kuning mendadak menutupi kepalanya...</p>` }]
+            },
+            {
+                id: 4,
+                judul: "Pelukan Terakhir Ayah",
+                penulis: "Dian Kusuma",
+                kategori: ["keluarga", "sedih"],
+                rating: 4.9,
+                cover: "https://images.unsplash.com/photo-1485546246426-74dc88dec4d9?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Romi selalu menganggap ayahnya dingin dan tak peduli. Namun sebuah buku harian tua membongkar pengorbanan rahasia sang ayah demi masa depannya.",
+                bab: [{ judul: "Bab 1: Sepatu Sekolah yang Kebesaran", isi: `<p>Romi benci sepatu ini. Sepatu pemberian Ayah yang selalu kebesaran dua nomor, tanpa tahu alasan tersembunyi di baliknya...</p>` }]
+            },
+            {
+                id: 5,
+                judul: "Hanya Tokoh Utama Tamu",
+                penulis: "Siska Amelia",
+                kategori: ["cinta", "sedih"],
+                rating: 4.6,
+                cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Menjadi tempat pelarian saat seseorang patah hati memang menyakitkan. Clara tahu ia hanya figuran dalam cerita cinta sahabat terbaiknya, Kevin.",
+                bab: [{ judul: "Bab 1: Skenario Pendukung", isi: `<p>Di saat Kevin menangisi gadis lain, Clara selalu ada menyodorkan tisu dan senyuman paling tegar yang ia miliki...</p>` }]
+            },
+            {
+                id: 6,
+                judul: "Bintang yang Lupa Bersinar",
+                penulis: "Fajar Ramadhan",
+                kategori: ["sedih"],
+                rating: 4.8,
+                cover: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Bintang, siswi jenius pemenang olimpiade sains, mendadak kehilangan penglihatannya akibat penyakit langka tepat sebelum beasiswa impiannya didapat.",
+                bab: [{ judul: "Bab 1: Gelap yang Tiba-Tiba", isi: `<p>Papan tulis itu mendadak mengabur. Tulisan rumus fisika perlahan menghilang digantikan bayangan hitam membiru...</p>` }]
+            },
+            {
+                id: 7,
+                judul: "Janji di Atas Bangku Kayu",
+                penulis: "Aulia Rahma",
+                kategori: ["cinta", "keluarga"],
+                rating: 4.7,
+                cover: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Dua anak dari dua keluarga yang saling berselisih berjanji bertemu setiap pukul 5 sore di bangku taman kota tua.",
+                bab: [{ judul: "Bab 1: Jam Lima Sore", isi: `<p>Denting lonceng gereja tua berbunyi lima kali. Rehan duduk tenang menyapukan cat air ke kanvasnya menunggu gadis pita biru itu datang...</p>` }]
+            },
+            {
+                id: 8,
+                judul: "Pelangi Setelah Badai Mama",
+                penulis: "Tania Rendy",
+                kategori: ["keluarga"],
+                rating: 4.8,
+                cover: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Mencoba merajut kembali hubungan hangat antara seorang ibu tunggal pencuci pakaian dengan anak remajanya yang sempat kehilangan arah.",
+                bab: [{ judul: "Bab 1: Aroma Sabun Cuci", isi: `<p>Tangan Mama yang kasar dan pecah-pecah adalah alasan utama mengapa Kania selalu bisa melanjutkan pendidikannya hingga detik ini...</p>` }]
+            },
+            {
+                id: 9,
+                judul: "Ruang yang Kau Tinggalkan",
+                penulis: "Bima Arya",
+                kategori: ["sedih", "cinta"],
+                rating: 4.9,
+                cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80",
+                sinopsis: "Setiap barang di kamar Alfi mengingatkannya pada sosok Sarah, gadis yang pergi tanpa sempat menguapkan kata perpisahan.",
+                bab: [{ judul: "Bab 1: Toples Origami", isi: `<p>Ada seribu burung origami di dalam toples kaca ini. Masing-masing berisi harapan Sarah yang belum sempat terwujud...</p>` }]
+            }
+        ];
+
+        // GENERATE REMAINING 40 NOVELS AUTOMATICALLY TO REACH EXACTLY 50
+        const sampleTitles = [
+            "Lentera Sebelum Senja", "Melodi Cinta Terakhir", "Kakakku Pahlawanku", "Senandung Senja Yang Hilang",
+            "Batas Waktu Kita", "Mengapa Harus Dia?", "Jejak Langkah Ibu", "Tangisan Di Ujung Malam",
+            "Cinta Monyet Di SMA", "Seragam Putih Abu-Abu", "Cahaya Di Balik Awan", "Surat Untuk Tuhan",
+            "Pelukan Yang Hilang", "Hujan Di Bulan November", "Rindu Dalam Diam", "Keluarga Yang Terpisah",
+            "Bunga Terakhir Musim Gugur", "Takdir Yang Tertukar", "Menunggu Di Halte Bus", "Sepatu Roda Dan Cinta",
+            "Catatan Kelam Remaja", "Senyum Di Balik Duka", "Sahabat Sejati", "Kisah Dari Atap Sekolah",
+            "Satu Bintang Untukmu", "Matahari Terbit Di Matamu", "Janji Di Bawah Pohon Kamboja", "Komet Yang Melintas",
+            "Tak Bersisa Lagi", "Senyuman Terakhir Kirana", "Di Mana Ibu?", "Putih Abu-Abu Baper",
+            "Cinta Bertepuk Sebelah Tangan", "Perpustakaan Dan Kenangan", "Melangkah Lagi", "Bintang Jatuh Malam Ini",
+            "Surat Rahasia Siswa Baru", "Suara Hati Yang Terluka", "Kisah Di Balik Jendela", "Pelarian Cinta Remaja"
+        ];
+
+        const authors = ["Rangga Wijaya", "Anindita Clara", "Gilang Ramadhan", "Dewi Lestari", "Rizal Pratama", "Nisa Sabyan", "Andi Syahputra", "Siti Nurhaliza"];
+        const categories = [["cinta"], ["keluarga"], ["sedih"], ["cinta", "sedih"], ["keluarga", "sedih"], ["cinta", "keluarga"]];
+        const covers = [
+            "https://images.unsplash.com/photo-1499209974431-9dac3ada00d7?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1474552284527-4ad2e6d24606?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80"
+        ];
+
+        for (let i = 10; i < 50; i++) {
+            const title = sampleTitles[i - 10];
+            const author = authors[i % authors.length];
+            const kat = categories[i % categories.length];
+            const rating = (4.0 + (i % 10) * 0.1).toFixed(1);
+            const cover = covers[i % covers.length];
+
+            novelData.push({
+                id: i,
+                judul: title,
+                penulis: author,
+                kategori: kat,
+                rating: parseFloat(rating),
+                cover: cover,
+                sinopsis: `Sebuah novel emosional yang menceritakan tentang perjalanan hidup ${title.toLowerCase()}, penuh liku, tawa, dan air mata remaja masa kini.`,
+                bab: [
+                    {
+                        judul: "Bab 1: Awal Cerita",
+                        isi: `<p>Pagi itu, udara dingin merasuk hingga ke tulang. Cerita ini dimulai dari sebuah keputusan kecil yang mengubah segalanya...</p>
+                        <p>Langkah kaki yang ragu-ragu menelusuri koridor sekolah. Tatapan mata orang-orang terasa menuntut, namun tekad di dalam dada tak pernah padam.</p>`
+                    },
+                    {
+                        judul: "Bab 2: Momen Emosional",
+                        isi: `<p>Air mata itu akhirnya menetes juga. Tak ada kata yang mampu terucap saat kenyataan pahit itu akhirnya terungkap di depan mata...</p>`
+                    }
+                ]
+            });
+        }
+
+        // STATE MANAGEMENT
+        let bookmarks = JSON.parse(localStorage.getItem('nusa_favs')) || [0];
+        let currentFilter = 'semua';
+        let searchQuery = '';
+        let currentNovelId = 0;
+        let currentChapterIndex = 0;
+        let readerFontSize = 16;
+        let isDarkMode = true;
+
+        // INITIALIZATION
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            renderNovels();
+            updateFavCount();
+
+            // Event Listeners for Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                document.getElementById('clearSearch').classList.toggle('hidden', searchQuery === '');
+                renderNovels();
+            });
+
+            document.getElementById('mobileSearchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderNovels();
+            });
+
+            document.getElementById('clearSearch').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                searchQuery = '';
+                document.getElementById('clearSearch').classList.add('hidden');
+                renderNovels();
+            });
+        });
+
+        // RENDER NOVEL CARDS
+        function renderNovels() {
+            const grid = document.getElementById('novelGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            const filtered = novelData.filter(novel => {
+                const matchCategory = currentFilter === 'semua' || novel.kategori.includes(currentFilter) || (currentFilter === 'favorit' && bookmarks.includes(novel.id));
+                const matchSearch = novel.judul.toLowerCase().includes(searchQuery) || novel.penulis.toLowerCase().includes(searchQuery) || novel.sinopsis.toLowerCase().includes(searchQuery);
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(novel => {
+                const isFav = bookmarks.includes(novel.id);
+                const card = document.createElement('div');
+                card.className = "bg-night-800/60 border border-dusk-900/40 rounded-2xl overflow-hidden hover:border-dusk-500/50 transition-all duration-300 flex flex-col group card-glow";
+                
+                // Badge category
+                const badgesHtml = novel.kategori.map(k => {
+                    let label = k === 'cinta' ? 'Cinta' : k === 'keluarga' ? 'Keluarga' : 'Sedih';
+                    return `<span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-night-950/80 text-dusk-300 border border-dusk-900">${label}</span>`;
+                }).join(' ');
+
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden cursor-pointer" onclick="bacaNovel(${novel.id})">
+                        <img src="${novel.cover}" alt="${novel.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/20 to-transparent"></div>
+                        
+                        <div class="absolute top-3 left-3 flex gap-1">
+                            ${badgesHtml}
+                        </div>
+
+                        <button onclick="event.stopPropagation(); toggleBookmark(${novel.id})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-night-950/70 backdrop-blur-md flex items-center justify-center text-gray-300 hover:text-rose-500 transition-colors">
+                            <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'text-rose-500 fill-rose-500' : ''}"></i>
+                        </button>
+
+                        <div class="absolute bottom-2 left-3 right-3 flex items-center justify-between text-xs text-gray-300">
+                            <span class="flex items-center gap-1 text-amber-400 font-bold"><i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i> ${novel.rating}</span>
+                            <span class="text-[11px] text-gray-400 font-medium">${novel.bab.length} Bab</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div class="space-y-1">
+                            <h3 onclick="bacaNovel(${novel.id})" class="text-base font-bold text-white line-clamp-1 group-hover:text-dusk-400 cursor-pointer transition-colors">${novel.judul}</h3>
+                            <p class="text-xs text-dusk-400 font-medium flex items-center gap-1"><i data-lucide="feather" class="w-3 h-3"></i> ${novel.penulis}</p>
+                            <p class="text-xs text-gray-400 line-clamp-2 pt-1 leading-relaxed">${novel.sinopsis}</p>
+                        </div>
+
+                        <button onclick="bacaNovel(${novel.id})" class="w-full py-2 rounded-xl bg-night-900 hover:bg-dusk-600/20 border border-dusk-900/60 text-dusk-300 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Baca Cerita
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // FILTER CATEGORY
+        function filterKategori(kat) {
+            currentFilter = kat;
+            
+            // Highlight active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-night-800 text-gray-400 hover:text-white border border-dusk-900/50";
+            });
+
+            const activeBtn = document.getElementById(`btn-${kat}`);
+            if(activeBtn) {
+                activeBtn.className = "filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-dusk-600 text-white shadow-md";
+            }
+
+            const titleMap = {
+                'semua': '✨ Semua Novel Remaja',
+                'cinta': '💕 Kisah Cinta Remaja',
+                'keluarga': '🏠 Drama & Kasih Keluarga',
+                'sedih': '😭 Novel Sedih & Baper',
+                'favorit': '❤️ Koleksi Favorit Saya'
+            };
+            document.getElementById('sectionTitle').innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-dusk-400"></i> ${titleMap[kat] || 'Jelajahi Novel'}`;
+            
+            renderNovels();
+            lucide.createIcons();
+        }
+
+        function toggleFavoritTab() {
+            if (currentFilter === 'favorit') {
+                filterKategori('semua');
+            } else {
+                filterKategori('favorit');
+            }
+        }
+
+        function resetFilters() {
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            filterKategori('semua');
+        }
+
+        // BOOKMARK / FAVORITE SYSTEM
+        function toggleBookmark(id) {
+            const index = bookmarks.indexOf(id);
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+            } else {
+                bookmarks.push(id);
+            }
+            localStorage.setItem('nusa_favs', JSON.stringify(bookmarks));
+            updateFavCount();
+            renderNovels();
+            updateReaderFavStatus();
+        }
+
+        function updateFavCount() {
+            document.getElementById('favCount').innerText = bookmarks.length;
+            const heroIcon = document.getElementById('heroFavIcon');
+            if(bookmarks.includes(0)) {
+                heroIcon.classList.add('text-rose-500', 'fill-rose-500');
+            } else {
+                heroIcon.classList.remove('text-rose-500', 'fill-rose-500');
+            }
+        }
+
+        // NOVEL READER MODAL LOGIC
+        function bacaNovel(id) {
+            currentNovelId = id;
+            currentChapterIndex = 0;
+            const novel = novelData.find(n => n.id === id);
+
+            if (!novel) return;
+
+            document.getElementById('readerTitle').innerText = novel.judul;
+            document.getElementById('readerAuthor').innerText = `Oleh: ${novel.penulis}`;
+
+            // Populate chapters select dropdown
+            const select = document.getElementById('chapterSelect');
+            select.innerHTML = '';
+            novel.bab.forEach((b, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = b.judul;
+                select.appendChild(opt);
+            });
+
+            loadChapter(0);
+            updateReaderFavStatus();
+
+            const modal = document.getElementById('readerModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function loadChapter(index) {
+            currentChapterIndex = parseInt(index);
+            const novel = novelData.find(n => n.id === currentNovelId);
+            const chapter = novel.bab[currentChapterIndex];
+
+            document.getElementById('chapterSelect').value = currentChapterIndex;
+            
+            const contentDiv = document.getElementById('chapterContent');
+            contentDiv.innerHTML = `
+                <h2 class="text-2xl font-bold text-dusk-400 mb-6 font-sans">${chapter.judul}</h2>
+                ${chapter.isi}
+            `;
+
+            // Update nav buttons
+            document.getElementById('prevChapBtn').disabled = currentChapterIndex === 0;
+            document.getElementById('prevChapBtn').classList.toggle('opacity-50', currentChapterIndex === 0);
+            
+            document.getElementById('nextChapBtn').disabled = currentChapterIndex === novel.bab.length - 1;
+            document.getElementById('nextChapBtn').classList.toggle('opacity-50', currentChapterIndex === novel.bab.length - 1);
+
+            document.getElementById('readerBody').scrollTop = 0;
+        }
+
+        function navigateChapter(direction) {
+            const novel = novelData.find(n => n.id === currentNovelId);
+            const newIndex = currentChapterIndex + direction;
+            if (newIndex >= 0 && newIndex < novel.bab.length) {
+                loadChapter(newIndex);
+            }
+        }
+
+        function closeReader() {
+            document.getElementById('readerModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function changeFontSize(delta) {
+            readerFontSize = Math.max(12, Math.min(26, readerFontSize + delta));
+            document.getElementById('fontSizeDisplay').innerText = `${readerFontSize}px`;
+            document.getElementById('chapterContent').style.fontSize = `${readerFontSize}px`;
+        }
+
+        function toggleReaderTheme() {
+            isDarkMode = !isDarkMode;
+            const modal = document.getElementById('readerModal');
+            const header = document.getElementById('readerHeader');
+            const themeBtn = document.getElementById('themeBtn');
+
+            if (isDarkMode) {
+                modal.className = "fixed inset-0 z-50 flex flex-col bg-night-950 text-gray-300";
+                header.className = "bg-night-900/90 backdrop-blur-md border-b border-dusk-900/50 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-20";
+                themeBtn.innerHTML = `<i data-lucide="sun" class="w-4 h-4"></i>`;
+            } else {
+                modal.className = "fixed inset-0 z-50 flex flex-col bg-amber-50 text-gray-900";
+                header.className = "bg-amber-100/90 backdrop-blur-md border-b border-amber-200 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-20";
+                themeBtn.innerHTML = `<i data-lucide="moon" class="w-4 h-4"></i>`;
+            }
+            lucide.createIcons();
+        }
+
+        function toggleReaderBookmark() {
+            toggleBookmark(currentNovelId);
+        }
+
+        function updateReaderFavStatus() {
+            const readerFavBtn = document.getElementById('readerFavBtn');
+            if (bookmarks.includes(currentNovelId)) {
+                readerFavBtn.innerHTML = `<i data-lucide="heart" class="w-4 h-4 text-rose-500 fill-rose-500"></i>`;
+            } else {
+                readerFavBtn.innerHTML = `<i data-lucide="heart" class="w-4 h-4 text-gray-400"></i>`;
+            }
+            lucide.createIcons();
+        }
+
+        function toggleMobileSearch() {
+            const mobileSearch = document.getElementById('mobileSearch');
+            mobileSearch.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
